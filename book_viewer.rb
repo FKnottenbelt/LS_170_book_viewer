@@ -6,6 +6,14 @@ before do
   @contents = File.readlines("data/toc.txt")
 end
 
+helpers do
+  def in_paragraphs(chapter_content)
+    chapter_content.split("\n\n").map do |paragraph|
+      "<p>#{paragraph}</p>"
+    end.join
+  end
+end
+
 get "/" do
   @title = "The Adventures of Sherlock Holmes"
 
@@ -20,7 +28,7 @@ get "/chapter/:number" do
 
   @title = "Chapter #{number}: #{chapter_title}"
 
-  @chapter = File.read("data/chp#{number}.txt").split("\n\n")
+  @chapter = File.read("data/chp#{number}.txt")
 
   erb :chapter
 end
