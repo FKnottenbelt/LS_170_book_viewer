@@ -13,10 +13,6 @@ helpers do
     end.join
   end
 
-  def find_title(chapter_num)
-     @contents[chapter_num.to_i - 1]
-  end
-
   def search_files(file_names, query)
     file_names.map do |file_name|
       file = File.read("#{file_name}")
@@ -24,7 +20,7 @@ helpers do
       next unless !!file.match(/#{query}/)
 
       chapter_num = file_name.scan(/\d+/).join
-      title = find_title(chapter_num) || "nnb"
+      title = @contents[chapter_num.to_i - 1]
 
       "<li><a href='/chapter/#{chapter_num}'>#{title}</a></li>"
     end.join
