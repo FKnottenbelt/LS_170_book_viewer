@@ -26,9 +26,15 @@ get "/chapter/:number" do
   index = number.to_i - 1
   chapter_title = @contents[index]
 
+  redirect "/" unless (1..chapter_title.size).cover? number
+
   @title = "Chapter #{number}: #{chapter_title}"
 
   @chapter = File.read("data/chp#{number}.txt")
 
   erb :chapter
+end
+
+not_found do
+  redirect "/"
 end
