@@ -5,7 +5,8 @@
   <button type="submit">Search</button>
 </form>
 
-<div class = "results">
+<% visibility = (params[:query] == nil ? "hidden" : "visible") %>
+<div class = "results" style="visibility: <%= visibility %>;">
   <h2 class="content-subhead">Results for '<%= params[:query] %>'</h2>
   <ul>
     <%= search_results(@query) %>

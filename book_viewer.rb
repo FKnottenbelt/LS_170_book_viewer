@@ -17,11 +17,10 @@ helpers do
      @contents[chapter_num.to_i - 1]
   end
 
-  def search_results(query)
-    files_names = Dir.glob("data/chp*.txt")
-
-    files_names.map do |file_name|
+  def search_files(file_names, query)
+    file_names.map do |file_name|
       file = File.read("#{file_name}")
+
       next unless !!file.match(/#{query}/)
 
       chapter_num = file_name.scan(/\d+/).join
@@ -29,6 +28,18 @@ helpers do
 
       "<li><a href='/chapter/#{chapter_num}'>#{title}</a></li>"
     end.join
+  end
+
+  def search_results(query)
+    return if query.nil?
+
+    file_names = Dir.glob("data/chp*.txt")
+    message = "<p>Sorry, no matches were found</p>"
+
+    result = search_files(file_names, query)
+
+    return message if result.empty?
+    result
   end
 end
 
