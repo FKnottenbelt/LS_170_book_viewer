@@ -36,6 +36,11 @@ helpers do
 
     results
   end
+
+  def highlight(tekst, query)
+    tekst.gsub(query, "<strong>#{query}</strong>")
+  end
+
 end
 
 get "/" do
