@@ -13,48 +13,28 @@ helpers do
     end.join
   end
 
-  def select_paragraphs(file, query)
-    selected = []
-
-    file.split("\n\n").map.with_index do |paragraph, indx|
-      selected << "<p id=#{indx}>#{paragraph}</p>" if paragraph.include?(query)
-    end
-    selected
-  end
-
-  def make_search_result_html(title_link, paragraphs)
-    paragraphs.map do |paragraph|
-        "#{title_link} #{paragraph}"
+  def each_chapter
+    @contents.each_with_index do |name, index|
+      number = index + 1
+      contents = File.read("data/chp#{number}.txt")
+      yield number, name, contents
     end
   end
 
-  def get_title_link(file_name)
-    chapter_num = file_name.scan(/\d+/).join
-    title = @contents[chapter_num.to_i - 1]
-    "<li><a href='/chapter/#{chapter_num}'>#{title}</a></li>"
-  end
+  def chapters_matching(query)
+    results = []
 
-  def search_files(file_names, query)
-    file_names.map do |file_name|
-      file = File.read("#{file_name}")
-      next unless !!file.match(/#{query}/)
+    return results unless query
 
-      title_link = get_title_link(file_name)
-      paragraphs = select_paragraphs(file, query)
-      make_search_result_html(title_link, paragraphs)
-    end.join
-  end
+    each_chapter do |number, name, contents|
+      matches = {}
+      contents.split("\n\n").each_with_index do |paragraph, index|
+        matches[index] = paragraph if paragraph.include?(query)
+      end
+      results << {number: number, name: name, paragraphs: matches} if matches.any?
+    end
 
-  def search_results(query)
-    return if query.nil?
-
-    file_names = Dir.glob("data/chp*.txt")
-    message = "<p>Sorry, no matches were found</p>"
-
-    result = search_files(file_names, query)
-
-    return message if result.empty?
-    result
+    results
   end
 end
 
@@ -80,7 +60,8 @@ get "/chapter/:number" do
 end
 
 get "/search" do
-  @query = params[:query]
+  #@query = params[:query]
+  @results = chapters_matching(params[:query])
   erb :search
 end
 

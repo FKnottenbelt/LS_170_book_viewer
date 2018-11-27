@@ -5,11 +5,41 @@
   <button type="submit">Search</button>
 </form>
 
-<% visibility = (params[:query] == nil ? "hidden" : "visible") %>
-<div class = "results" style="visibility: <%= visibility %>;">
-  <h2 class="content-subhead">Results for '<%= params[:query] %>'</h2>
-  <ul>
-    <%= search_results(@query) %>
-  </ul>
-</div>
+<!--<%# visibility = (params[:query] == nil ? "hidden" : "visible") %>-->
+<!--<div class = "results" style="visibility: <%#= visibility %>;">-->
+<!--  <h2 class="content-subhead">Results for '<%#= params[:query] %>'</h2>-->
+<!--  <ul>-->
+<!--    <%#= search_results(@query) %>-->
+<!--  </ul>-->
+<!--</div>-->
 
+<% if params[:query] %>
+  <% if @results.empty? %>
+    <div class="no-results">
+      <p>Sorry, no matches were found.</p>
+    </div>
+  <% else %>
+      <div class='results'>
+        <h2 class="content-subhead">Results for '<%= params[:query]%>'</h2>
+
+        <ul class='result-block'>
+          <% @results.each do |result| %>
+            <li>
+              <h4 class='chapter-title'><%= result[:name] %></h4>
+
+              <ul class='paragraph'>
+                <% result[:paragraphs].each do |index, text| %>
+                  <li>
+                    <a href="/chapters/<%= result[:number] %>#paragraph<%= index %>">
+                      <%= text %>
+                    </a>
+                  </li>
+                <% end %>
+              </ul>
+
+           </li>
+          <% end %>
+        </ul>
+      </div>
+  <% end %>
+<% end %>
