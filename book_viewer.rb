@@ -65,7 +65,6 @@ get "/chapter/:number" do
 end
 
 get "/search" do
-  #@query = params[:query]
   @results = chapters_matching(params[:query])
   erb :search
 end
